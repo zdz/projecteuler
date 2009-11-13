@@ -39,10 +39,13 @@ def TestPermutations():
         print i
 #TestPermutations()
 
-def BinSearch(arr,x,low = 0,high = None):
-    i = bisect.bisect_left(arr,x,low,high)
-    return (i if arr[i] == x else -1)
-
+def BinSearch(arr,x,low,high):
+    if high < low:return -1
+    m = (low+high)//2
+    if arr[m] == x:return m
+    elif arr[m] > x:high = m-1
+    else: low = m + 1 
+    return  BinSearch(arr,x,low,high)
 def PrimeSieve_o(n):
     lf = [0]*n
     res = []
@@ -1042,20 +1045,11 @@ def p50():
 
 def p51():
     l = PrimeSieve(1000000)
-    ls = set(l)
-    le = len(l)
-    def CB(n):
-        res = 0
-        while n > 0:
-            res += 1 if (n&1) == 1 else 0
-            n >>= 1
-        return res
+    ls,le = set(l),len(l)
     def GBP(n):
-        ll = []
-        p = 0    
+        ll,p = [],0
         while n>0:
-            if (n&1)==1:
-                ll.append(p)
+            if (n&1)==1:ll.append(p)
             n >>= 1
             p+=1
         return ll
@@ -1066,7 +1060,7 @@ def p51():
             pl = GBP(i)
             b,cc = 1 if (sl-1) in l else 0,0
             for j in range(b,10):
-                slit = copy.copy(sli)
+                slit = sli[:]
                 for index in pl:
                     slit[sl-1-index] = str(j)
                 st = reduce(lambda x,y:x+y,slit,'')
@@ -1077,7 +1071,6 @@ def p51():
                 return True
         return False
 
-    #return Check(121313)
     for i in xrange(l.index(120383)+1,le):
         if Check(l[i]):
             return l[i]
@@ -1087,8 +1080,6 @@ def p51():
         if IsPrime(i) and Chedk(i):
             return n
         i+=2
-
-
 #print p51()
 
 def p52():
@@ -1248,34 +1239,34 @@ def p59():
 #print p59()
 
 def p60():
-    N = 10000
-    l = PrimeSieve(N)
-    ls = set(l)
-    d = {}
+    d,l = {},PrimeSieve(10000)
+    for p in l:d[p] = set()
     for i,v in enumerate(l):
-        d[i] = []
         for j in xrange(0,i):
-            for k in d[j]:
-                pt = int("%s%s"%(k,i))
-                if pt in ls:#(pt > N and IsPrime(pt)) or (BinSearch(l,pt) > 0):
-                    pt = int('%s%s'%(i,k))
-                    if pt in ls:#(pt > N and IsPrime(pt)) or (BinSearch(l,pt) > 0):
-                        d[j].append(i)
-    res = -1
-    for v in d.itervalues():
-        if len(v) >= 5:
-            t = sum(v[:5])
-            if res < 0 or t < res:
-                res = t
-    return res
-    pass
-print p60()
+            if IsPrime(int("%s%s"%(l[j],v))) and IsPrime(int("%s%s"%(v,l[j]))):
+                d[l[j]].add(v)
+                d[v].add(l[j])
+    resl = []
+    def R(kk,vv,resl):
+        if len(kk) == 5:
+            resl.append(kk)
+            return
+        for v in vv:
+            if all(v > it for it in kk) and kk.issubset(d[v]):
+                k = kk|set([v])
+                R(k,vv&d[v],resl)
+    for k,v in d.iteritems():
+        R(set([k]),v,resl)
+    return min(sum(rl) for rl in resl)
+#print p60()
+
 
 def p67():
     return p18()
 def main(arg):
     if len(arg) > 1:
         pass
+
 
 if __name__ == '__main__':main(sys.argv)
 
