@@ -1297,6 +1297,60 @@ def p61():
     return sum([r for r in R(0,[],set())][0])
 #print p61()
 
+def p62():
+    x,d = 2,{}
+    while True:
+        y = ''.join(sorted(str(x*x*x)))
+        c = d.get(y,[])
+        c.append(x)
+        if len(c) >= 5:
+            return min(c)**3
+        d[y] = c
+        x+=1
+
+#print p62()
+
+def p63():
+    res = 0
+    for i in range(1,10):
+        for j in range(1,100):
+            k = len(str(i**j))
+            if j == k:
+                res +=1
+            elif k > j:break
+    return res
+#print p63()
+
+def p64():
+    def CountOfContinuedFractions(n):
+        x = int(math.floor(math.sqrt(n)))
+        l,a,b,res = [x],1,x,1
+        while b*b < n:
+            r = (x+b)*a/(n-b*b)
+            a = (n-b*b)/a 
+            b = r*a-b
+            res += 1
+            #l.append(r)
+            if a == 1 and b == x:
+                break
+        return res - 1 #,l 
+    res = 0
+    for i in xrange(2,10001):
+        if (CountOfContinuedFractions(i)&1) == 1:
+            res += 1
+    return res
+#print p64()
+
+def p65():
+    l = [2] + reduce(lambda x,y:x+y,[[1,i+i,1] for i in range(1,34)],[])
+    N = 99
+    a,b = 1,l[N]
+    for i in range(N-1,0,-1):
+        a,b = b,l[i]*b+a
+    return sum(int(c) for c in str(b*2+a))
+
+#print p65()
+
 def p67():
     return p18()
 def main(arg):
