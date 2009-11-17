@@ -452,7 +452,16 @@ def p16():
     return sum(int(s) for s in str(2**1000))
 
 def p17():
-    return 21124
+    def gl(n):
+        l = ([0, 3, 3, 5, 4, 4, 3, 5, 5, 4, 3, 6, 6, 8, 8, 7, 7, 9, 8, 8],[6, 6, 5, 5, 5, 7, 6, 6, 7])
+        if n == 1000:return 11
+        elif n%100 == 0:return l[0][n/100]+7
+        elif n > 100:return l[0][n/100]+10+gl(n%100)
+        elif n < 20:return l[0][n]
+        else: return l[1][n/10-2]+l[0][n%10]
+    return sum(gl(i) for i in range(1,1001))
+
+#print p17()
 
 def p18():
     f = open('triangle.txt','r')
@@ -1396,6 +1405,84 @@ def p66():
 
 def p67():
     return p18()
+
+def p68():
+    l1,l2 = [1,2,3,4,5],[6,7,8,9,10]
+    res,rs = 6,''
+    for i in Permutations(l2):
+        for j in Permutations(l1):
+            if len(set([i[k] + j[k] + j[(k+1)%5] for k in range(5)])) == 1:
+                t = ''.join([str(i[k])+str(j[k])+str(j[(k+1)%5]) for k in range(5)])
+                if len(rs) == 0:
+                    res,rs = i[0],t
+                elif i[0] == res:
+                    if t > rs:rs = t
+                elif i[0] < res:
+                    res,rs = i[0],t
+    return rs
+#print p68()
+
+def p69():
+    N = 1000000
+    l,d = PrimeSieve(N+1),{}
+    for p in l:d[p] = p-1
+    def Cal(n):
+        if n in d:return d[n]
+        for p in l:
+            if n%p == 0:
+                nt = n/p
+                d[n] = Cal(nt)*(p if nt%p == 0 else p-1)
+                return d[n]
+    rt,res = 0,2
+    for i in xrange(2,N+1):
+        t = i*1.0/Cal(i)
+        if rt < t:
+            rt,res = t,i
+    return res
+
+def p69_2():
+    l = PrimeSieve(100)
+    res = 1
+    for p in l:
+        res *= p
+        if res >= 1000000:
+            return res/p
+
+#print p69()
+
+def p70():
+    N = 10000000
+    l,d = PrimeSieve(N+1),{}
+    for p in l:d[p] = p-1
+    def Cal(n):
+        if n in d:return d[n]
+        for p in l:
+            if n%p == 0:
+                nt = n/p
+                d[n] = Cal(nt)*(p if nt%p == 0 else p-1)
+                return d[n]
+    rt,res = N,2
+    for i in xrange(1000000,N):
+        t = Cal(i)
+        if sorted(str(t)) == sorted(str(i)):
+            #print i,t
+            t = i*1.0/t
+            if rt > t:
+                rt,res = t,i
+    return res
+#print p70()
+
+
+
+
+
+
+
+
+
+
+
+
 def main(arg):
     if len(arg) > 1:
         pass
